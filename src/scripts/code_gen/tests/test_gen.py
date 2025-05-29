@@ -115,3 +115,16 @@ def test_render(snapshot: SnapshotAssertion, language: str) -> None:
             # Or, append language to snapshot name. For single file extension, simpler to change name.
             snapshot_name = f"{outfile.name}.{language}"
             assert snapshot(name=snapshot_name, extension_class=SingleFileSnapshotExtension) == outfile.read_bytes()
+
+
+def test_render_unsupported_language() -> None:
+    """
+    Test that rendering with an unsupported language raises a ValueError.
+    """
+    with tempfile.TemporaryDirectory() as outpath_str:
+        outpath = Path(outpath_str)
+        with pytest.raises(ValueError) as excinfo:
+            render(filters=[], options=[], outpath=outpath, language="java")
+        
+        assert "Unsupported language: java" in str(excinfo.value)
+        assert "Supported languages are: ['python', 'typescript']" in str(excinfo.value)

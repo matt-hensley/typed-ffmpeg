@@ -109,7 +109,16 @@ def generate(
     ffmpeg_filters = load_filters(outpath, rebuild)
     ffmpeg_options = gen_option_info()
 
-    render(ffmpeg_filters, ffmpeg_options, outpath, language=language)
+    try:
+        render(ffmpeg_filters, ffmpeg_options, outpath, language=language)
+    except ValueError as e:
+        # Assuming SUPPORTED_LANGUAGES is accessible or the error message is self-contained enough.
+        # For a cleaner approach, gen.SUPPORTED_LANGUAGES could be imported if needed.
+        typer.echo(typer.style(f"Error: {e}", fg=typer.colors.RED, bold=True))
+        # The error message from gen.py already lists supported languages.
+        # typer.echo(f"Supported languages are: {gen.SUPPORTED_LANGUAGES}") # If imported
+        raise typer.Exit(code=1)
+        
     os.system("pre-commit run -a")
 
 
