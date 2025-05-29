@@ -1,0 +1,73 @@
+// Placeholder for {{ language }} FFmpeg Filters
+// This template will generate TypeScript code for FFmpeg filter definitions.
+
+// Imports - these will likely be interfaces or types defined elsewhere
+// import { StreamType } from './stream_types'; // Assuming a file defining stream types
+// import { FilterOption, FilterParameterValue } from './filter_option_types'; // Assuming types for filter options
+
+console.log('TypeScript filters.ts.jinja loaded');
+
+{% raw %}{% for f in filters %}
+// Filter: {{ f.name }}
+// Description: {{ f.description }}
+// Reference: {% if f.ref %}{{ f.ref }}{% else %}N/A{% endif %}
+
+export interface I{{ f.name | title | replace("_", "") }}FilterConfig {
+  {%- if f.options %}
+  {{ f | filter_option_typings }}
+  {%- else %}
+  // This filter has no configurable options.
+  {%- endif %}
+}
+
+export class {{ f.name | title | replace("_", "") }}Filter {
+  public readonly name: string = '{{ f.name }}';
+  public readonly description: string = '{{ f.description | replace("\n", " ") | escape }}';
+  public readonly reference?: string = {% if f.ref %}'{{ f.ref }}'{% else %}undefined{% endif %};
+  
+  // Input stream types: {{ f | input_typings }}
+  // Output stream types: {{ f | output_typings }}
+
+  private config: I{{ f.name | title | replace("_", "") }}FilterConfig;
+
+  constructor(config: I{{ f.name | title | replace("_", "") }}FilterConfig = {}) {
+    this.config = config;
+  }
+
+  public getOptions(): string[] {
+    const options: string[] = [];
+    // Logic to build options string based on this.config
+    // Example:
+    // if (this.config.someOption) {
+    //   options.push(`someOption=${this.config.someOption}`);
+    // }
+    {% for option in f.options %}
+    if (this.config.{{ option.name | option_name_safe }} !== undefined) {
+      options.push(`{{ option.name }}=${this.config.{{ option.name | option_name_safe }}}`);
+    }
+    {%- endfor %}
+    return options;
+  }
+
+  public apply(/* inputStream: Stream */): /* Stream */ any {
+    // Placeholder for applying the filter to a stream
+    // This would typically involve interacting with an FFmpeg process or library
+    console.log(`Applying filter {{ f.name }} with options:`, this.getOptions().join(':'));
+    // return inputStream.pipe(this); // Conceptual
+    return "stream_placeholder"; // Placeholder
+  }
+}
+
+{% endfor %}{% endraw %}
+
+// Example of how a generated filter might be used (conceptual)
+// import { SomeInputStream } from './streams'; // Assuming stream definitions
+//
+// const fadeInFilter = new FadeFilter({
+//   type: 'in',
+//   start_time: '0',
+//   duration: '1'
+// });
+//
+// const processedStream = fadeInFilter.apply(SomeInputStream);
+// console.log(processedStream);

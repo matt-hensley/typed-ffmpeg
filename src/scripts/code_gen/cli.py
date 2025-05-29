@@ -91,7 +91,11 @@ def load_filters(outpath: Path, rebuild: bool) -> list[FFMpegFilter]:
 
 
 @app.command()
-def generate(outpath: Path | None = None, rebuild: bool = False) -> None:
+def generate(
+    outpath: Path | None = None,
+    rebuild: bool = False,
+    language: str = typer.Option("python", "--language", "-l", help="Language for code generation."),
+) -> None:
     """
     Generate filter and option documents
 
@@ -105,7 +109,7 @@ def generate(outpath: Path | None = None, rebuild: bool = False) -> None:
     ffmpeg_filters = load_filters(outpath, rebuild)
     ffmpeg_options = gen_option_info()
 
-    render(ffmpeg_filters, ffmpeg_options, outpath)
+    render(ffmpeg_filters, ffmpeg_options, outpath, language=language)
     os.system("pre-commit run -a")
 
 

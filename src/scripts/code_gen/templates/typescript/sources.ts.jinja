@@ -1,0 +1,78 @@
+// Placeholder for {{ language }} FFmpeg Sources
+// This template will generate TypeScript code for FFmpeg source definitions.
+
+// Imports - these will likely be interfaces or types defined elsewhere
+// import { Stream } from './stream_types'; // Assuming a base Stream type
+// import { OptionConfig } from './option_types'; // Assuming types for options
+
+console.log('TypeScript sources.ts.jinja loaded');
+
+{% raw %}{% for option in options %}
+{% if option.is_input_option %}
+// Source/Input Option: {{ option.name }}
+// Description: {{ option.description }}
+// Type: {{ option.type }}
+// Reference: {% if option.ref %}{{ option.ref }}{% else %}N/A{% endif %}
+
+export interface I{{ option.name | title | replace("_", "") }}SourceConfig {
+  // Define configuration properties for this source based on its specific options
+  // Example:
+  // path?: string; // if it's a file source
+  // format?: string;
+  // {% for o_opt in option.options %} // Assuming options have sub-options, adjust if not the case
+  // {{ o_opt.name | option_name_safe }}?: any; // {{ o_opt.type | option_typing }} // TODO: Refine typing
+  // {% endfor %}
+  value?: {{ option | option_typing }};
+}
+
+export class {{ option.name | title | replace("_", "") }}Source {
+  public readonly name: string = '{{ option.name }}';
+  public readonly description: string = '{{ option.description | replace("\n", " ") | escape }}';
+  // public readonly type: string = '{{ option | option_typing }}'; // This now returns a TS type string
+  
+  private config: I{{ option.name | title | replace("_", "") }}SourceConfig;
+
+  constructor(config: I{{ option.name | title | replace("_", "") }}SourceConfig = {}) {
+    this.config = config;
+  }
+
+  public getCommandArguments(): string[] {
+    const args: string[] = [];
+    // Logic to build command arguments based on this.config
+    // Example:
+    // args.push('-{{ option.name }}');
+    // if (this.config.value !== undefined) {
+    //   args.push(String(this.config.value));
+    // }
+    if (this.config.value !== undefined) {
+      args.push(`-{{ option.name }}`);
+      args.push(String(this.config.value));
+    } else {
+      // Handle cases where the option might be a flag or has a complex structure
+      args.push(`-{{ option.name }}`); // Default behavior, might need adjustment
+    }
+    return args;
+  }
+
+  public createStream(): /* Stream */ any {
+    // Placeholder for creating a stream from this source
+    // This would typically involve initializing an FFmpeg input
+    console.log(`Creating stream from source {{ option.name }} with config:`, this.config);
+    // return new Stream({ source: this }); // Conceptual
+    return "stream_placeholder"; // Placeholder
+  }
+}
+
+{% endif %}
+{% endfor %}{% endraw %}
+
+// Example of how a generated source might be used (conceptual)
+// import { SomeSpecificStreamType } from './streams';
+//
+// const lavfiSource = new LavfiSource({
+//   // Assuming 'lavfi' is a valid source name and has 'graph' as a property
+//   value: 'color=c=blue:s=1280x720:d=5' // Example for -i lavfi:graph=...
+// });
+//
+// const videoStream = lavfiSource.createStream(); // Returns a generic Stream or a specific type
+// console.log(videoStream);

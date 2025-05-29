@@ -1,0 +1,52 @@
+// Placeholder for {{ language }} Node representation
+// This will define the structure and properties of a node in the DAG
+
+// Imports (to be refined based on actual dependencies)
+// import { Edge } from './edge';
+
+export interface INodeProps {
+  // Define properties for a Node, e.g., ID, type, configuration, inputs, outputs
+  id: string;
+  type: string; // e.g., 'filter', 'input_source', 'output_sink'
+  config?: Record<string, any>; // Node-specific configuration
+  // inputs?: Edge[]; // Edges coming into this node
+  // outputs?: Edge[]; // Edges going out from this node
+}
+
+export class Node {
+  public readonly id: string;
+  public readonly type: string;
+  public config: Record<string, any>;
+  // private inputEdges: Edge[] = [];
+  // private outputEdges: Edge[] = [];
+
+  constructor(props: INodeProps) {
+    this.id = props.id;
+    this.type = props.type;
+    this.config = props.config || {};
+    // this.inputEdges = props.inputs || [];
+    // this.outputEdges = props.outputs || [];
+    console.log(`TypeScript Node created with ID: ${this.id}`);
+  }
+
+  // Methods for node manipulation, e.g., addInput, addOutput, updateConfig
+  public updateConfig(newConfig: Record<string, any>): void {
+    this.config = { ...this.config, ...newConfig };
+  }
+
+  // public addInputEdge(edge: Edge): void {
+  //   this.inputEdges.push(edge);
+  // }
+
+  // public addOutputEdge(edge: Edge): void {
+  //   this.outputEdges.push(edge);
+  // }
+
+  public toString(): string {
+    return `Node (ID: ${this.id}, Type: ${this.type})`;
+  }
+}
+
+// Example Usage (optional)
+// const myNode = new Node({ id: "node1", type: "filter", config: { filterName: "scale" } });
+// console.log(myNode.toString());

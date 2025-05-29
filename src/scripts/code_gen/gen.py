@@ -13,13 +13,6 @@ from ffmpeg.common.schema import (
     FFMpegOptionType,
 )
 
-template_folder = Path(__file__).parent / "templates"
-
-loader = jinja2.FileSystemLoader(template_folder)
-env = jinja2.Environment(
-    loader=loader,
-)
-
 
 def filter_option_typing(option: FFMpegFilterOption) -> str:
     """
@@ -245,7 +238,10 @@ env.filters["filter_option_typings"] = filter_option_typings
 
 
 def render(
-    filters: list[FFMpegFilter], options: list[FFMpegOption], outpath: pathlib.Path
+    filters: list[FFMpegFilter],
+    options: list[FFMpegOption],
+    outpath: pathlib.Path,
+    language: str = "python",
 ) -> list[pathlib.Path]:
     """
     Render the filter and option documents
@@ -258,8 +254,24 @@ def render(
     Returns:
         The rendered files
     """
+    template_folder = Path(__file__).parent / "templates" / language
+    loader = jinja2.FileSystemLoader(template_folder)
+    env = jinja2.Environment(
+        loader=loader,
+    )
+
+    env.filters["stream_name_safe"] = stream_name_safe
+    env.filters["option_name_safe"] = option_name_safe
+    env.filters["filter_option_typing"] = filter_option_typing
+    env.filters["option_typing"] = option_typing
+    env.filters["input_typings"] = input_typings
+    env.filters["output_typings"] = output_typings
+    env.filters["filter_option_typings"] = filter_option_typings
+
     outpath.mkdir(exist_ok=True)
     output = []
+    # TODO: This glob needs to be adjusted based on the language if template extensions differ.
+    # For now, assuming .py.jinja for Python.
     for template_file in template_folder.glob("**/*.py.jinja"):
         template_path = template_file.relative_to(template_folder)
 

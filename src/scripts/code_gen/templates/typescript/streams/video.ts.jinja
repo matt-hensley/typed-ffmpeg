@@ -1,0 +1,67 @@
+// Placeholder for {{ language }} Video Stream representation
+// This will define the structure and specific operations for video streams.
+
+// Imports - these will likely be interfaces or types defined elsewhere
+// import { BaseStream, IStreamProps } from './base_stream'; // Assuming a base stream class/interface
+// import { Filter } from '../filters'; // Assuming a generic Filter type
+
+console.log('TypeScript streams/video.ts.jinja loaded');
+
+export interface IVideoStreamProps /* extends IStreamProps */ {
+  // Video-specific properties, e.g., width, height, frameRate, pixelFormat
+  width?: number;
+  height?: number;
+  frameRate?: number; // or as a string like "25/1"
+  pixelFormat?: string; // e.g., 'yuv420p', 'rgb24'
+  // Inherits other properties like 'name', 'id' from a potential IStreamProps
+}
+
+export class VideoStream /* extends BaseStream */ {
+  public readonly type: string = 'video';
+  public width?: number;
+  public height?: number;
+  public frameRate?: number;
+  public pixelFormat?: string;
+
+  constructor(props: IVideoStreamProps) {
+    // super(props); // Call to base stream constructor
+    this.width = props.width;
+    this.height = props.height;
+    this.frameRate = props.frameRate;
+    this.pixelFormat = props.pixelFormat;
+    console.log('TypeScript VideoStream created');
+  }
+
+  // Video-specific methods
+  public setResolution(width: number, height: number): this {
+    this.width = width;
+    this.height = height;
+    // Potentially add a filter (e.g., scale) or option to the FFmpeg command
+    console.log(`VideoStream resolution set to: ${width}x${height}`);
+    return this;
+  }
+
+  public setFrameRate(rate: number): this {
+    this.frameRate = rate;
+    console.log(`VideoStream frame rate set to: ${rate}`);
+    return this;
+  }
+
+  // public applyFilter(filter: Filter): VideoStream {
+  //   // Logic to apply a filter and return a new VideoStream
+  //   console.log(`Applying filter to VideoStream: ${filter.name}`);
+  //   const newProps = { ...this, id: undefined }; // Create new stream props
+  //   // In a real scenario, this would modify the FFmpeg graph/command
+  //   return new VideoStream(newProps);
+  // }
+
+  public override toString(): string {
+    return `VideoStream (Resolution: ${this.width}x${this.height}, FrameRate: ${this.frameRate}, PixelFormat: ${this.pixelFormat})`;
+  }
+}
+
+// Example Usage (optional)
+// const myVideoStream = new VideoStream({ name: "input_video", width: 1920, height: 1080, frameRate: 25 });
+// console.log(myVideoStream.toString());
+// myVideoStream.setResolution(1280, 720);
+// console.log(myVideoStream.toString());

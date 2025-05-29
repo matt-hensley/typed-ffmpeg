@@ -1,0 +1,63 @@
+// Placeholder for {{ language }} Audio Stream representation
+// This will define the structure and specific operations for audio streams.
+
+// Imports - these will likely be interfaces or types defined elsewhere
+// import { BaseStream, IStreamProps } from './base_stream'; // Assuming a base stream class/interface
+// import { Filter } from '../filters'; // Assuming a generic Filter type
+
+console.log('TypeScript streams/audio.ts.jinja loaded');
+
+export interface IAudioStreamProps /* extends IStreamProps */ {
+  // Audio-specific properties, e.g., sampleRate, channels, format
+  sampleRate?: number;
+  channels?: number;
+  format?: string; // e.g., 's16le', 'fltp'
+  // Inherits other properties like 'name', 'id' from a potential IStreamProps
+}
+
+export class AudioStream /* extends BaseStream */ {
+  public readonly type: string = 'audio';
+  public sampleRate?: number;
+  public channels?: number;
+  public format?: string;
+
+  constructor(props: IAudioStreamProps) {
+    // super(props); // Call to base stream constructor
+    this.sampleRate = props.sampleRate;
+    this.channels = props.channels;
+    this.format = props.format;
+    console.log('TypeScript AudioStream created');
+  }
+
+  // Audio-specific methods
+  public setSampleRate(rate: number): this {
+    this.sampleRate = rate;
+    // Potentially add a filter or option to the underlying FFmpeg command
+    console.log(`AudioStream sample rate set to: ${rate}`);
+    return this;
+  }
+
+  public setChannels(channels: number): this {
+    this.channels = channels;
+    console.log(`AudioStream channels set to: ${channels}`);
+    return this;
+  }
+
+  // public applyFilter(filter: Filter): AudioStream {
+  //   // Logic to apply a filter and return a new AudioStream
+  //   console.log(`Applying filter to AudioStream: ${filter.name}`);
+  //   const newProps = { ...this, id: undefined }; // Create new stream props
+  //   // In a real scenario, this would modify the FFmpeg graph/command
+  //   return new AudioStream(newProps);
+  // }
+
+  public override toString(): string {
+    return `AudioStream (SampleRate: ${this.sampleRate}, Channels: ${this.channels}, Format: ${this.format})`;
+  }
+}
+
+// Example Usage (optional)
+// const myAudioStream = new AudioStream({ name: "input_audio", sampleRate: 44100, channels: 2 });
+// console.log(myAudioStream.toString());
+// myAudioStream.setSampleRate(48000);
+// console.log(myAudioStream.toString());
